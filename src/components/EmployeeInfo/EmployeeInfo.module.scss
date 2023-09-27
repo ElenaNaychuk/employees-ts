@@ -1,0 +1,10 @@
+@import '../../../src/styles/vars.scss';
+
+.container {
+  max-width: 975px;
+  height: 575px;
+  flex-shrink: 0;
+  border-radius: 0px 10px 10px 0px;
+  border-left: 1px solid #E0E0E0;
+  background: $background;
+}

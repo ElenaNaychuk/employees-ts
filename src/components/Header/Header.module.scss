@@ -1,0 +1,28 @@
+@import '../../../src/styles/vars.scss';
+
+@mixin font($weight, $size, $color) {
+  font-weight: $weight;
+  font-size: $size;
+  font-family: $family;
+  color: $color;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 55px 0;
+
+  .link {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .homeLink {
+    @include font($bold, $font-32, $red);
+  }
+
+  .employeeLink {
+    @include font($light, $font-16, $black);
+  }
+}
