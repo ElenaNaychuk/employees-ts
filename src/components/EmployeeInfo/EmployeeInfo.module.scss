@@ -1,10 +1,80 @@
 @import '../../../src/styles/vars.scss';
 
+@mixin font($weight, $size, $color) {
+  font-weight: $weight;
+  font-size: $size;
+  font-family: $family;
+  color: $color;
+}
+
 .container {
   max-width: 975px;
-  height: 575px;
-  flex-shrink: 0;
+  min-height: 575px;
+
   border-radius: 0px 10px 10px 0px;
-  border-left: 1px solid #E0E0E0;
+  border-left: 1px solid $darkBackground;
   background: $background;
+
+  padding: 30px 21px;
+
+  .info {
+    display: flex;
+
+    @media screen and (max-width: 1024px) {
+      flex-direction: column;
+    }
+
+    .photo {
+      width: 50%;
+      height: 286px;
+
+      border: 1px solid $darkBackground;
+
+      @media screen and (max-width: 1024px) {
+        width: 424px;
+        margin: 0 auto;
+      }
+      @media screen and (max-width: 800px) {
+        width: 324px;
+        margin: 0 auto;
+      }
+    }
+
+    .content {
+      width: 50%;
+      padding-left: 61px;
+
+      @media screen and (max-width: 1024px) {
+        width: 100%;
+        padding-left: 0;
+      }
+
+      .title, .text {
+          margin-top: 10px;
+      }
+
+      .title {
+        @include font($normal, $font-16, $black);
+      }
+
+      .selectedText {
+        @include font($normal, $font-14, $black);
+      }
+
+      .text {
+        @include font($light, $font-14, $lightGrey);
+      }
+
+    }
+  }
+}
+
+.defaultText {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 70%;
+  border-left: 1px solid $darkBackground;
+  @include font($light, $font-14, $lightGrey);
 }

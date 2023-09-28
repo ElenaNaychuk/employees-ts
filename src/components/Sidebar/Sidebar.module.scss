@@ -16,6 +16,10 @@
     margin-bottom: 14px;
   }
 
+  .errorText {
+    color: $red;
+  }
+
   .form {
     width: 100%;
     margin-bottom: 29px;
@@ -28,6 +32,11 @@
       background: var(--all-colors-black-white-white, $white);
       @include font($light, $font-16, $black);
     }
+  }
+
+  .results {
+    height: 400px;
+    overflow-y: scroll;
   }
 
   .text {

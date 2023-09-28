@@ -1,0 +1,58 @@
+@import '../../../src/styles/vars.scss';
+
+@mixin font($weight, $size, $color) {
+  font-weight: $weight;
+  font-size: $size;
+  font-family: $family;
+  color: $color;
+}
+
+.container {
+  display: flex;
+
+  width: 100%;
+  height: 70px;
+
+  border-radius: 10px;
+  background: $white;
+  box-shadow: $box-shadow;
+  margin-top: 18px;
+
+  .avatar {
+    width: 70px;
+    height: 70px;
+
+    border-right: 1px solid $borderColor;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    background: url('../../assets/images/defaultAvatar.png'), $white 50% /cover no-repeat;
+  }
+
+  .userInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: 80%;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+
+    padding-left: 15px;
+
+    .userName {
+      @include font($normal, $font-14, $black)
+    }
+
+    .userEmail {
+      @include font($light, $font-14, $lightGrey)
+    }
+  }
+
+  .userInfo:hover {
+    cursor: pointer;
+  }
+
+  .isSelected {
+    background-color: $darkBackground;
+  }
+}
