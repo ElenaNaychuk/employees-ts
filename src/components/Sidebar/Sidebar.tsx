@@ -1,8 +1,9 @@
 import style from "./Sidebar.module.scss";
 import React, {useEffect, useState} from "react";
-import {findEmployees} from "../../jsonPlaceholderServer/EmployeeRepository";
+import {abortionController, findEmployee} from "../../jsonPlaceholderServer/EmployeeRepository";
 import {IEmployee} from "../../domain/IEmployee";
 import {EmployeeCard} from "../EmployeeCard/EmployeeCard";
+import {AbortControllerProxy} from "../../lib/AbortControllerProxy";
 
 type sidebarProps = {
     selectedCard: IEmployee | undefined;
@@ -17,32 +18,38 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
     const [messages, setMessages] = useState<string[]>([]);
 
     const fetchDataFromServer = async (): Promise<void> => {
-        setIsLoading(true);
-
         const searchStrings = searchText
             .split(',')
             .map(item => item.trim())
             .filter(item => item !== '')
         ;
 
-        const promises = searchStrings.map((string) => findEmployees(string));
+        setFoundUsers([]);
+        setMessages([]);
+        setLoadingError(false);
+        setIsLoading(true);
+        console.log('abort');
+        abortionController.abort();
+        new AbortControllerProxy(new AbortController())//todo!
+
+        const promises = searchStrings.map((string) => findEmployee(string));
         const results = await Promise.allSettled(promises);
 
         const users = [];
         const messages = [];
         for (const [index, result] of results.entries()) {
-            if (result.status === 'rejected') {
-                return;
+            if (result.status === 'rejected') {//never happens
+                continue;
             }
             if (!result.value.success) {
                 setLoadingError(true);
-                return;
+                continue;
             }
-            if (result.value.user) {
-                users.push(result.value.user);
-            } else {
+            if (!result.value.user) {
                 messages.push(`Пользователь ${searchStrings[index]} не найден`);
+                continue;
             }
+            users.push(result.value.user);
         }
         setFoundUsers(users);
         setMessages(messages);
@@ -53,13 +60,7 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
         if (!searchText) {
             return;
         }
-        const timer = setTimeout(() => {
-            setFoundUsers([]);
-            setMessages([]);
-            setLoadingError(false);
-            fetchDataFromServer();
-        }, 1000);
-
+        const timer = setTimeout(fetchDataFromServer, 0);//todo!
         return () => clearTimeout(timer);
     }, [searchText]);
 
@@ -68,9 +69,11 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
         setSelectedCard(userCard);
     };
 
+    const notFoundUsers = !foundUsers.length && !isLoading && !messages.length;
+
     return (
         <aside className={style.container}>
-            <p className={style.subtitle}>Поиск сотрудников</p>
+            <h5 className={style.subtitle}>Поиск сотрудников</h5>
             {loadingError &&
                 <p className={style.errorText}>При загрузке произошла ошибка...</p>
             }
@@ -85,12 +88,9 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
                     />
                 </label>
             </form>
-            <p className={style.subtitle}>Результаты</p>
+            <h5 className={style.subtitle}>Результаты</h5>
             {messages.map(message =>
-                <p
-                    className={style.text}
-                    key={Date.now() - Math.random()}
-                >
+                <p className={style.text} key={Date.now() - Math.random()}>
                     {message}
                 </p>)
             }
@@ -98,7 +98,7 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
                 {isLoading &&
                     <p className={style.text}>Loading...</p>
                 }
-                {!foundUsers.length && !isLoading
+                {notFoundUsers
                     ? <p className={style.text}>Начните поиск</p>
                     : foundUsers.map(user =>
                         <EmployeeCard

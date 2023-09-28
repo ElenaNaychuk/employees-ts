@@ -33,7 +33,7 @@
     flex-direction: column;
     justify-content: center;
 
-    width: 80%;
+    width: 70%;
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
 
@@ -44,6 +44,9 @@
     }
 
     .userEmail {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       @include font($light, $font-14, $lightGrey)
     }
   }

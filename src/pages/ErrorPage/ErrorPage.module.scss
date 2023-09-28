@@ -1,0 +1,17 @@
+@import '../../../src/styles/vars.scss';
+
+@mixin font($weight, $size, $color) {
+  font-weight: $weight;
+  font-size: $size;
+  font-family: $family;
+  color: $color;
+}
+
+.container {
+  text-align: center;
+
+  .message {
+    padding: 50px;
+    @include font($normal, $font-32, $black);
+  }
+}

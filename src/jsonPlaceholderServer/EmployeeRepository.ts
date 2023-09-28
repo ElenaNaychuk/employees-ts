@@ -1,21 +1,41 @@
 import {IEmployee} from "../domain/IEmployee";
+import {AbortControllerProxy} from "../lib/AbortControllerProxy";
 
 const URL = 'https://jsonplaceholder.typicode.com/users';
 
-export const findEmployees = async (value: string): Promise<{ success: boolean, user?: IEmployee }> => {
+const getByUserId = async (id: string): Promise<IEmployee> => {
+    let url = `${URL}/${id}`;
+    console.log('fetching');
+    const response = await fetch(url, {
+        signal: abortionController.signal,
+    });
+    console.log('fetched');
+    const user = await response.json();
+    return user;
+}
+
+const getByUserName = async (name: string): Promise<IEmployee> => {
+    let url = `${URL}?username=${name}`;
+    const response = await fetch(url, {
+        signal: abortionController.signal
+    });
+    const [user] = await response.json();
+    return user;
+}
+
+export const findEmployee = async (searchText: string): Promise<{ success: boolean, user?: IEmployee }> => {
     try {
-        // if(typeof value === "number") {
-        //     const response = await fetch(`${URL}/${value}`);
-        //     return await response.json();
-        // }
-        const response = await fetch(`${URL}?username=${value}`);
-        const [user] = await response.json();
+        const user = await (
+            !isNaN(Number(searchText))
+                ? getByUserId(searchText)
+                : getByUserName(searchText)
+        );
         return {
             success: true,
             ...user && {user},
-        }
+        };
     } catch (error) {
-        console.log(`Error: ${error}`);
+        console.log('Error:', {error});
         return {success: false};
     }
 }
