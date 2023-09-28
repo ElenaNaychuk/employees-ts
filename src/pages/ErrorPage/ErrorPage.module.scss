@@ -9,9 +9,10 @@
 
 .container {
   text-align: center;
+  padding: 0 50px;
 
   .message {
     padding: 50px;
-    @include font($normal, $font-32, $black);
+    @include font($light, $font-32, $black);
   }
 }

@@ -1,24 +1,17 @@
 import {IEmployee} from "../domain/IEmployee";
-import {AbortControllerProxy} from "../lib/AbortControllerProxy";
 
 const URL = 'https://jsonplaceholder.typicode.com/users';
 
 const getByUserId = async (id: string): Promise<IEmployee> => {
     let url = `${URL}/${id}`;
-    console.log('fetching');
-    const response = await fetch(url, {
-        signal: abortionController.signal,
-    });
-    console.log('fetched');
+    const response = await fetch(url);
     const user = await response.json();
     return user;
 }
 
 const getByUserName = async (name: string): Promise<IEmployee> => {
     let url = `${URL}?username=${name}`;
-    const response = await fetch(url, {
-        signal: abortionController.signal
-    });
+    const response = await fetch(url);
     const [user] = await response.json();
     return user;
 }

@@ -1,9 +1,8 @@
 import style from "./Sidebar.module.scss";
 import React, {useEffect, useState} from "react";
-import {abortionController, findEmployee} from "../../jsonPlaceholderServer/EmployeeRepository";
+import {findEmployee} from "../../jsonPlaceholderServer/EmployeeRepository";
 import {IEmployee} from "../../domain/IEmployee";
 import {EmployeeCard} from "../EmployeeCard/EmployeeCard";
-import {AbortControllerProxy} from "../../lib/AbortControllerProxy";
 
 type sidebarProps = {
     selectedCard: IEmployee | undefined;
@@ -28,9 +27,6 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
         setMessages([]);
         setLoadingError(false);
         setIsLoading(true);
-        console.log('abort');
-        abortionController.abort();
-        new AbortControllerProxy(new AbortController())//todo!
 
         const promises = searchStrings.map((string) => findEmployee(string));
         const results = await Promise.allSettled(promises);
@@ -60,16 +56,15 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
         if (!searchText) {
             return;
         }
-        const timer = setTimeout(fetchDataFromServer, 0);//todo!
+        const timer = setTimeout(fetchDataFromServer, 1500);
         return () => clearTimeout(timer);
     }, [searchText]);
 
     const handleCardClick = (userCard: IEmployee): void => {
-        console.log(`Нажали на карточку: ${userCard.name}`);
         setSelectedCard(userCard);
     };
 
-    const notFoundUsers = !foundUsers.length && !isLoading && !messages.length;
+    const noFoundUsers = !foundUsers.length && !isLoading && !messages.length;
 
     return (
         <aside className={style.container}>
@@ -78,15 +73,13 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
                 <p className={style.errorText}>При загрузке произошла ошибка...</p>
             }
             <form className={style.form}>
-                <label>
-                    <input
-                        className={style.input}
-                        placeholder="Введите id или имя"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        title="Вводите имена или id через запятую"
-                    />
-                </label>
+                <input
+                    className={style.input}
+                    placeholder="Введите id или имя"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    title="Вводите имена или id через запятую"
+                />
             </form>
             <h5 className={style.subtitle}>Результаты</h5>
             {messages.map(message =>
@@ -98,7 +91,7 @@ const Sidebar: React.FC<sidebarProps> = ({selectedCard, setSelectedCard}) => {
                 {isLoading &&
                     <p className={style.text}>Loading...</p>
                 }
-                {notFoundUsers
+                {noFoundUsers
                     ? <p className={style.text}>Начните поиск</p>
                     : foundUsers.map(user =>
                         <EmployeeCard
